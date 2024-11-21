@@ -1,28 +1,47 @@
-html {
-  font-size: 14px;
+/* site.css */
+
+/* สไตล์พื้นฐานของ Navbar */
+.navbar {
+  background: rgba(255, 255, 255, 0.2); /* โปร่งใส */
+  backdrop-filter: blur(5px); /* เบลอ */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.navbar-brand {
+  font-weight: 600;
+  color: white;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.navbar a {
+  color: white !important;
 }
 
-body {
-  margin-bottom: 60px;
-  background-color: #13003a;
-  color: #00ffbb;
+.navbar a:hover {
+  text-decoration: underline;
 }
 
-th {
-    color: #ff0000;
+/* Footer */
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+  background: rgba(255, 255, 255, 0.1); /* พื้นหลัง Footer */
+  color: white;
+  text-align: center;
 }
 
-td {
-    color: #8cff00;
+/* ปุ่ม */
+.btn-primary {
+  background-color: #1b6ec2;
+  color: white;
+  border-radius: 25px;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.btn-primary:hover {
+  background-color: green
 }

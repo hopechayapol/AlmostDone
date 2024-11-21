@@ -1,42 +1,44 @@
 ﻿@page
-@model IndexModel
+@model FinalProject.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Inbox";
 }
 
-<center><img src="images/logo.jpg" width="400" /></center>
+<div class="fullscreen-container">
+    <!-- Header with Typing Animation -->
+    <h1 class="animated-title">Celestial</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>From</th>
-            <th>To</th>
-            <th>Subject</th>
-            <th>Date/Time</th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.listEmails)
-        {
+    <!-- Table Section -->
+    <div class="content mt-5">
+        <table class="table table-dark table-hover">
+            <thead>
             <tr>
-                <td>@item.EmailSender</td>
-                <td>@item.EmailReceiver</td>
-                <td>
-                    @if (item.EmailIsRead.Equals("0"))
-                    {
-                        <img src="images/yellow.gif" height="10pt">
-                    }
-                    <a href="ReadEmail?emailid=@item.EmailID">@item.EmailSubject</a>
-                </td>
-                <td>@item.EmailDate</td>
-                <td>
-                    <a class="btn btn-danger btn-sm" asp-page="/DeleteEmail" asp-route-emailid="@item.EmailID">Delete</a>
-                </td>
-
-
+                <th>From</th>
+                <th>Subject</th>
+                <th>Date/Time</th>
+                <th>Delete</th>
             </tr>
-        }
-    </tbody>
-</table>
-<a class="btn btn-primary btn-sm" href="/ComposeMail?Sender=@User.Identity.Name">Compose New Email</a>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.listEmails)
+            {
+                <tr>
+                    <td>@item.EmailSender</td>
+                    <td>
+                        @if (item.EmailIsRead.Equals("0"))
+                        {
+                            <img src="images/yellow.gif" height="10pt" />
+                        }
+                        <a href="ReadEmail?emailid=@item.EmailID">@item.EmailSubject</a>
+                    </td>
+                    <td>@item.EmailDate</td>
+                    <td>
+                        <a class="btn btn-danger btn-sm" asp-page="/DeleteEmail" asp-route-emailid="@item.EmailID">Delete</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <a class="btn btn-primary btn-sm" href="/ComposeMail?Sender=@User.Identity.Name">Compose New Email</a>
+    </div>
+</div>

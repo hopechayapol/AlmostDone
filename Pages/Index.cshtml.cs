@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace FinalProject.Pages
 {
     public class IndexModel : PageModel
     {
-
         public List<EmailInfo> listEmails = new List<EmailInfo>();
 
         private readonly ILogger<IndexModel> _logger;
@@ -27,13 +27,36 @@ namespace FinalProject.Pages
                 {
                     connection.Open();
 
+                    // ดึงชื่อผู้ใช้ที่ล็อกอิน
                     string username = User.Identity.Name ?? "";
 
- 
-                    string sql = "SELECT * FROM emails WHERE emailreceiver = @username OR emailsender = @username";
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    // ดึงข้อมูล Mobile Phone ของผู้ใช้ที่ล็อกอิน
+                    string mobilePhone = null;
+                    string sqlGetMobile = "SELECT MobilePhone FROM AspNetUsers WHERE UserName = @username";
+                    using (SqlCommand command = new SqlCommand(sqlGetMobile, connection))
                     {
                         command.Parameters.AddWithValue("@username", username);
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mobilePhone = reader.GetString(0);
+                            }
+                        }
+                    }
+
+                    // ถ้าไม่มี Mobile Phone ให้หยุด
+                    if (string.IsNullOrEmpty(mobilePhone))
+                    {
+                        return;
+                    }
+
+                    // ตรวจสอบและแสดงข้อมูลจาก table emails ที่เกี่ยวข้องกับ Mobile Phone
+                    string sql = "SELECT * FROM emails WHERE emailreceiver = @mobilePhone";
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@mobilePhone", mobilePhone);
 
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -58,20 +81,19 @@ namespace FinalProject.Pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError("Error fetching emails: {ErrorMessage}", ex.Message);
             }
         }
-
     }
+
     public class EmailInfo
     {
-        public String EmailID;
-        public String EmailSubject;
-        public String EmailMessage;
-        public String EmailDate;
-        public String EmailIsRead;
-        public String EmailSender;
-        public String EmailReceiver;
+        public string EmailID { get; set; }
+        public string EmailSubject { get; set; }
+        public string EmailMessage { get; set; }
+        public string EmailDate { get; set; }
+        public string EmailIsRead { get; set; }
+        public string EmailSender { get; set; }
+        public string EmailReceiver { get; set; }
     }
-
 }
