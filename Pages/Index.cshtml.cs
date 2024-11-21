@@ -22,47 +22,46 @@ namespace FinalProject.Pages
         {
             try
             {
-                String connectionString = "Server=tcp:buem.database.windows.net,1433;Initial Catalog=buem;Persist Security Info=False;User ID=[USERNAME];Password=[PASSWORD];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                string connectionString = "Server = tcp:celestialfinalproject.database.windows.net,1433; Initial Catalog = Finalproject; Persist Security Info = False; User ID = Celestial; Password =Easy12345; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;";
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    string username = "";
-                    if (User.Identity.Name == null)
-                    {
-                        username = "";
-                    } else
-                    {
-                        username = User.Identity.Name;
-                    }
+                    string username = User.Identity.Name ?? "";
 
-                    String sql = "SELECT * FROM emails WHERE emailreceiver='"+username+"'";
+ 
+                    string sql = "SELECT * FROM emails WHERE emailreceiver = @username OR emailsender = @username";
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
+                        command.Parameters.AddWithValue("@username", username);
+
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                EmailInfo emailInfo = new EmailInfo();
-                                emailInfo.EmailID = "" + reader.GetInt32(0);
-                                emailInfo.EmailSubject = reader.GetString(1);
-                                emailInfo.EmailMessage = reader.GetString(2);
-                                emailInfo.EmailDate = reader.GetDateTime(3).ToString();
-                                emailInfo.EmailIsRead = "" + reader.GetInt32(4);
-                                emailInfo.EmailSender = reader.GetString(5);
-                                emailInfo.EmailReceiver = reader.GetString(6);
+                                EmailInfo emailInfo = new EmailInfo
+                                {
+                                    EmailID = reader.GetInt32(0).ToString(),
+                                    EmailSubject = reader.GetString(1),
+                                    EmailMessage = reader.GetString(2),
+                                    EmailDate = reader.GetDateTime(3).ToString(),
+                                    EmailIsRead = reader.GetInt32(4).ToString(),
+                                    EmailSender = reader.GetString(5),
+                                    EmailReceiver = reader.GetString(6)
+                                };
 
                                 listEmails.Add(emailInfo);
                             }
                         }
                     }
-                };
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
         }
+
     }
     public class EmailInfo
     {

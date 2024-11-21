@@ -7,29 +7,34 @@
 <center><img src="images/logo.jpg" width="400" /></center>
 
 <table class="table">
-    <thread>
+    <thead>
         <tr>
             <th>From</th>
+            <th>To</th>
             <th>Subject</th>
             <th>Date/Time</th>
             <th>Delete</th>
         </tr>
-    </thread>
-
+    </thead>
     <tbody>
         @foreach (var item in Model.listEmails)
         {
             <tr>
                 <td>@item.EmailSender</td>
+                <td>@item.EmailReceiver</td>
                 <td>
-                    @if (item.EmailIsRead.Equals("0")) {
-                        <img src="images/yellow.gif" height="10pt"> 
-                    } 
-                    <a href="ReadEmail?emailid=@item.EmailID">@item.EmailSubject</a></td>
+                    @if (item.EmailIsRead.Equals("0"))
+                    {
+                        <img src="images/yellow.gif" height="10pt">
+                    }
+                    <a href="ReadEmail?emailid=@item.EmailID">@item.EmailSubject</a>
+                </td>
                 <td>@item.EmailDate</td>
                 <td>
-                    <a class="btn btn-primary btn-sm" href="DeleteEmail?emailid=@item.EmailID">Delete</a>
+                    <a class="btn btn-danger btn-sm" asp-page="/DeleteEmail" asp-route-emailid="@item.EmailID">Delete</a>
                 </td>
+
+
             </tr>
         }
     </tbody>

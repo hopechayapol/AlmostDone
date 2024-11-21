@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 
 public class ComposeMailModel : PageModel
 {
@@ -24,13 +25,37 @@ public class ComposeMailModel : PageModel
     {
         if (ModelState.IsValid)
         {
-            // ตรรกะการส่งอีเมล (ตัวอย่าง)
-            // EmailService.SendEmail(Sender, Recipient, Subject, Body);
+            try
+            {
+                string connectionString = "Server = tcp:celestialfinalproject.database.windows.net,1433; Initial Catalog = Finalproject; Persist Security Info = False; User ID = Celestial; Password =Easy12345; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;";
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
 
-            // หลังส่งสำเร็จกลับไปหน้าแรก
+                    string sql = "INSERT INTO emails (emailsubject, emailmessage, emaildate, emailisread, emailsender, emailreceiver) VALUES (@subject, @body, @date, 0, @sender, @recipient)";
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@subject", Subject);
+                        command.Parameters.AddWithValue("@body", Body);
+                        command.Parameters.AddWithValue("@date", DateTime.Now);
+                        command.Parameters.AddWithValue("@sender", Sender);
+                        command.Parameters.AddWithValue("@recipient", Recipient);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+          
             return RedirectToPage("/Index");
         }
 
-        return Page(); // หากข้อมูลไม่ถูกต้องให้แสดงหน้าเดิม
+        return Page(); 
     }
+
+
 }
